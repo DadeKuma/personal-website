@@ -102,14 +102,24 @@
   });
 
   const hideTimeout = (element, time) => {
-    element.display = "block";
-    setTimeout(() => {
-      element.display = "none";
-    }, time);
+    element.show();
+    element.fadeOut(time, function () {
+      element.hide();
+    });
+  };
+
+  const showContactError = (error) => {
+    let contactError = document.getElementById("contact-error");
+    contactError.innerHTML = error;
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (grecaptcha.getResponse().length <= 0) {
+      let message = "Please solve the Captcha challange before sending a message.";
+      showContactError(message);
+      return;
+    }
     let form = document.getElementById("contact-form");
     let formData = new FormData(form);
     fetch("/", {
@@ -118,12 +128,13 @@
       body: new URLSearchParams(formData).toString(),
     })
       .then(() => {
-        let contactSuccess = document.getElementById("contact-success");
+        let contactSuccess = $("#contact-success");
         hideTimeout(contactSuccess, 2000);
+        form.reset();
       })
       .catch((error) => {
-        let contactError = document.getElementById("contact-error");
-        contactError.innerHTML = error;
+        let contactError = $("#contact-error");
+        showContactError(error);
         hideTimeout(contactError, 2000);
       });
   };
