@@ -108,16 +108,15 @@
     });
   };
 
-  const showContactError = (error) => {
-    let contactError = document.getElementById("contact-error");
-    contactError.innerHTML = error;
-  };
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    let contactError = $("#contact-error");
+    let contactSuccess = $("#contact-success");
+
     if (grecaptcha.getResponse().length <= 0) {
       let message = "Please solve the Captcha challange before sending a message.";
-      showContactError(message);
+      contactError.text(message);
+      hideTimeout(contactError, 2000);
       return;
     }
     let form = document.getElementById("contact-form");
@@ -128,13 +127,11 @@
       body: new URLSearchParams(formData).toString(),
     })
       .then(() => {
-        let contactSuccess = $("#contact-success");
         hideTimeout(contactSuccess, 2000);
         form.reset();
       })
       .catch((error) => {
-        let contactError = $("#contact-error");
-        showContactError(error);
+        contactError.text(error);
         hideTimeout(contactError, 2000);
       });
   };
