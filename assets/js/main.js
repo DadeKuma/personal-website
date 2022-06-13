@@ -100,4 +100,35 @@
       mirror: false
     })
   });
+
+  const hideTimeout = (element, time) => {
+    element.display = "block";
+    setTimeout(() => {
+      element.display = "none";
+    }, time);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    let form = document.getElementById("contact-form");
+    let formData = new FormData(form);
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then(() => {
+        let contactSuccess = document.getElementById("contact-success");
+        hideTimeout(contactSuccess, 2000);
+      })
+      .catch((error) => {
+        let contactError = document.getElementById("contact-error");
+        contactError.innerHTML = error;
+        hideTimeout(contactError, 2000);
+      });
+  };
+
+  document
+    .querySelector("form")
+    .addEventListener("submit", handleFormSubmit);
 })();
