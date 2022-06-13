@@ -103,9 +103,11 @@
 
   const hideTimeout = (element, time) => {
     element.show();
-    element.fadeOut(time, function () {
-      element.hide();
-    });
+    setTimeout(() => {
+      element.fadeOut("slow", function () {
+        element.hide();
+      });
+    }, time);
   };
 
   const handleFormSubmit = (e) => {
